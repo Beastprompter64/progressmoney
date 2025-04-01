@@ -51,7 +51,7 @@
         .milestone-markers {
             position: relative;
             height: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 120px; /* Augmenté pour plus d'espace */
         }
         
         .milestone {
@@ -71,12 +71,21 @@
         
         .milestone-label {
             position: absolute;
+            width: 120px; /* Largeur fixe pour aligner */
             top: 25px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) rotate(-45deg); /* Rotation pour économiser de l'espace */
+            transform-origin: top left;
             font-size: 12px;
             white-space: nowrap;
             color: #4cc9f0;
+            text-align: left;
+            margin-top: 15px; /* Ajout d'espace supplémentaire */
+        }
+        
+        /* Style alterné pour les étiquettes */
+        .milestone:nth-child(odd) .milestone-label {
+            top: 60px; /* Position alternée */
         }
         
         .input-container {
@@ -133,6 +142,18 @@
             transition: opacity 0.3s;
             z-index: 100;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Ajout pour rendre visible seulement au survol */
+        .milestone-label {
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        
+        .milestone:hover .milestone-label {
+            opacity: 1;
+            font-weight: bold;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -221,6 +242,10 @@
                 }
                 
                 $(".current-status").text(statusText);
+                
+                // Highlight current milestone
+                $(".milestone").removeClass("active");
+                $(`.milestone[data-value="${currentMilestone.value}"]`).addClass("active");
             }
             
             // Initialize with zero
@@ -256,10 +281,10 @@
                 function(e) {
                     const milestone = $(this);
                     const value = milestone.data("value");
-                    const milestoneName = milestone.find(".milestone-label").text();
+                    const label = milestones.find(m => m.value === value).label;
                     
                     $(".tooltip")
-                        .text(milestoneName)
+                        .text(`${value.toLocaleString()} - ${label}`)
                         .css({
                             left: e.pageX + 10,
                             top: e.pageY - 30,
